@@ -65,14 +65,14 @@ func main() {
 	defer httpTransport.Close()
 
 	// Create client with sampling support
-	mcpClient := client.NewClient(
+	c := client.NewClient(
 		httpTransport,
 		client.WithSamplingHandler(samplingHandler),
 	)
 
 	// Start the client
 	ctx := context.Background()
-	err = mcpClient.Start(ctx)
+	err = c.Start(ctx)
 	if err != nil {
 		log.Fatalf("Failed to start client: %v", err)
 	}
@@ -85,22 +85,34 @@ func main() {
 				// Sampling capability will be automatically added by the client
 			},
 			ClientInfo: mcp.Implementation{
-				Name:    "sampling-http-client",
+				Name:    "mcp-http-client",
 				Version: "1.0.0",
 			},
 		},
 	}
 
-	_, err = mcpClient.Initialize(ctx, initRequest)
+	_, err = c.Initialize(ctx, initRequest)
 	if err != nil {
 		log.Fatalf("Failed to initialize MCP session: %v", err)
 	}
 
-	log.Println("HTTP MCP client with sampling support started successfully!")
-	log.Println("The client is now ready to handle sampling requests from the server.")
-	log.Println("When the server sends a sampling request, the MockSamplingHandler will process it.")
+	fmt.Println("Performing health check...")
+	if err := c.Ping(ctx); err != nil {
+		log.Fatalf("Health check failed: %v", err)
+	}
+	fmt.Println("Server is alive and responding")
 
-	// mcpClient.CallTool()
+	toolsRequest := mcp.ListToolsRequest{}
+	tools, err := c.ListTools(ctx, toolsRequest)
+	if err != nil {
+		log.Printf("Failed to list tools: %v", err)
+		return
+	}
+
+	fmt.Printf("Available tools: %d\n", len(tools.Tools))
+	for _, tool := range tools.Tools {
+		fmt.Printf("- %s: %s\n", tool.Name, tool.Description)
+	}
 
 	// In a real application, you would keep the client running to handle sampling requests
 	// For this example, we'll just demonstrate that it's working
