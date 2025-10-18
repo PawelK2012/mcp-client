@@ -111,8 +111,10 @@ func main() {
 
 	fmt.Printf("Available tools: %d\n", len(tools.Tools))
 	for _, tool := range tools.Tools {
-		fmt.Printf("- %s: %s\n", tool.Name, tool.Description)
+		log.Printf("- %s: %s\n", tool.Name, tool.Description)
 	}
+
+	callTool(ctx, c)
 
 	// In a real application, you would keep the client running to handle sampling requests
 	// For this example, we'll just demonstrate that it's working
@@ -127,4 +129,24 @@ func main() {
 	case <-sigChan:
 		log.Println("Received shutdown signal")
 	}
+}
+
+// calling MCP server tool request
+func callTool(ctx context.Context, c *client.Client) {
+	args := make(map[string]interface{})
+	args["databse"] = "sql"
+	args["query"] = "SELECT * FROM masterbranch"
+	args["format"] = "json"
+
+	request := mcp.CallToolRequest{
+		Params: mcp.CallToolParams{
+			Name:      "execute_query",
+			Arguments: args,
+		},
+	}
+	result, err := c.CallTool(ctx, request)
+	if err != nil {
+		log.Printf("tool call failed: %w", err)
+	}
+	log.Printf("response from MCP %v", result)
 }
