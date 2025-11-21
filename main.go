@@ -134,19 +134,17 @@ func main() {
 // calling MCP server tool request
 func callTool(ctx context.Context, c *client.Client) {
 	args := make(map[string]interface{})
-	args["databse"] = "sql"
-	args["query"] = "SELECT * FROM masterbranch"
-	args["format"] = "json"
+	args["database"] = "mcp-query-db"
 
 	request := mcp.CallToolRequest{
 		Params: mcp.CallToolParams{
-			Name:      "execute_query",
+			Name:      "get_connection_status",
 			Arguments: args,
 		},
 	}
 	result, err := c.CallTool(ctx, request)
 	if err != nil {
-		log.Printf("tool call failed: %w", err)
+		log.Printf("tool call failed: %v", err)
 	}
-	log.Printf("response from MCP %v", result)
+	log.Printf("response from MCP %+v \n", result)
 }
