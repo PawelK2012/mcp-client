@@ -134,73 +134,10 @@ func main() {
 // calling MCP server tool request
 func callTool(ctx context.Context, c *client.Client) {
 	args := make(map[string]interface{})
-
-	/////////////
-	//execute_query examples
-
-	//par := make(map[string]any)
-	// par["tables"] = "customers"
-	//par["2"] = "L%"
-	// par := `{"tables": "customers"}`
-	// args["database"] = "sql"
-	args["query"] = "SELECT * FROM pg_settings"
-	// args["query"] = "SELECT id, CustomerName, ContactName FROM Customers WHERE Country = $1"
-	//  SELECT CustomerName, ContactName FROM customers WHERE Country = 'UK';
-	// args["query"] = "SELECT CustomerName, Address FROM customers WHERE Country =$1 AND City LIKE $2"
-	// args["query"] = "SELECT * FROM customers"
-	//args["query"] = "select column_name, data_type, character_maximum_length from INFORMATION_SCHEMA.COLUMNS where table_name =$1;"
-	// args["query"] = "CREATE SCHEMA movies;"
-	// args["query"] = `CREATE TABLE IF NOT EXISTS movies.comedy (
-	// 	id SERIAL PRIMARY KEY,
-	// 	title VARCHAR(200),
-	// 	genre VARCHAR(250),
-	// 	year int,
-	// 	created TIMESTAMP
-	// )`
-	// args["query"] = `INSERT INTO movies.comedy (title, genre, year)
-	// 		VALUES
-	// 		('fMagellan', 'comedy', 2022),
-	// 		('movie 34', 'comedy ', 2012),
-	// 		('Mrxxx', 'romantic comedy ', 2011);`
-	// args["query"] = `INSERT INTO Users (CustomerName, ContactName, Address, City, PostalCode, Country)
-	// 		VALUES
-	// 		('mr x', 'Tmrxxxx', 'Warsaw strasse', 'Berlin', '40555506', 'Germany'),
-	// 		('Pablo', 'Pablo picasso', 'Costa del sol', 'Malaga', 'mal22', 'Spaim'),
-	// 		('Mr H', 'h', 'Most posh place in Barcelona', 'Barcelona', 'bc 0AA', 'Spain');`
-	// args["parameters"] = par
-	args["format"] = "csv"
-
-	/////////////
-	//execute_prepared
-
-	// args["statement_name"] = "SELECT CustomerName, Address FROM customers WHERE id =$1;"
-	// args["statement_name"] = "SELECT CustomerName, Address FROM customers WHERE Country =$1 AND City LIKE $2"
-	// args["format"] = "json"
-	// par := []any{"UK", "L%"}
-	// args["parameters"] = par
-
-	/////////////
-	// get_schema examples
-
-	// var tables []string
-	// t := append(tables, "customers")
-	// t := append(tables, "comedy")
-	// args["database"] = "sql"
-	// args["tables"] = t
-	// args["detailed"] = true
-
-	/////////////
-	// get_connection_status
-
 	args["database"] = "mcp-query-db"
-	args["connected"] = true
-	args["pool_stats"] = true
 
 	request := mcp.CallToolRequest{
 		Params: mcp.CallToolParams{
-			// Name: "execute_prepared",
-			// Name: "execute_query",
-			// Name:  "get_schema",
 			Name:      "get_connection_status",
 			Arguments: args,
 		},
